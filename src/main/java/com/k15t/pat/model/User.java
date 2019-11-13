@@ -37,7 +37,6 @@ public class User {
 
     @NotEmpty(message = "Please fill in a password")
     @Length(min = 8, message = "Password should be min 8 characters!")
-    @JsonIgnore
     private String password;
 
     @NotEmpty(message = "Please fill in the email")
