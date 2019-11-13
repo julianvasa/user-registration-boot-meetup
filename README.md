@@ -27,37 +27,96 @@ The application is build on top of Spring Boot (http://projects.spring.io/spring
 Furthermore Jersey for implementing REST resources, Velocity for templating pages and jQuery/Bootstrap is included and 
 can be used as well. Building and packaging the application is done with Maven. 
 
-## What's expected of me?
-When our engineers receive your final result, we'll be looking at the following things:
+## Solution
 
-* The documentation provided. Please consider to document assumptions or decisions you made (e.g. technologies used). Clear and concise documentation is a must for a senior role. The documentation should start in the README.md, which can then contain links/pointers into any further documentation.
-* The ability to build it out of the box using maven
-* Improvements you made around the main task  
-* The quality and style of code written
-* The tests and their structure and coverage
-* The choice of technologies used to complete the task. You are free to use whatever you think is needed and helps you to get it done!
+I upgraded to the latest version of Spring Boot to not deal with lots of deprecations, 
+Spring Boot 1.3.6 originally proposed in the task is quite old now (JULY 04, 2016).
 
-Typically we expect it to compile and run on a Mac environment with Java 8. If your set up is any different, do let us know!
-When you are done share the result via GitHub.
+I replaced Velocity template engine with Thymeleaf which is much better integrated in Spring Boot.
+Velocity has been deprecated since Spring 4.3 and removed in Spring 5.0 (more details https://github.com/spring-projects/spring-framework/issues/18368, https://github.com/spring-projects/spring-framework/issues/17826)
+- "Velocity 1.7 dates back to 2010. Following up on the deprecation of our Velocity support in Spring 4.3, let's not include it to begin with in the 5.0 generation."
 
-## How to use git ##
+The discussion between Juergen Hoeller (lead and co-founder of Spring Framework) and Velocity folks:
+- "We are not in the business of deprecating Velocity in general in any case ;-) #17826 deprecated our Velocity support package in the core framework distribution, and this issue here is just about actually removing it towards Spring Framework 5.0.
+In the end, we don't want to drag along an outdated dependency - with a limited audience among Spring developers in the meantime - into a new major generation of the framework. Note that our traditional Velocity support package remains around in Spring Framework 4.3.x which we're maintaining until 2019. We have been reducing our optional third-party dependencies for a while, asking maintainers to ship Spring support on their end instead, e.g. for Thymeleaf and Ibatis. Feel free to do this for Velocity 2.0 as well as it materializes, even with support for Spring Framework 4.x since the View contract remains identical anyway.
+For Spring 5, we are strategically moving away from traditional template-based web views in general. Even just for that reason alone, we are not going to introduce support for any new template engine generations but rather focus on other areas (Jackson integration, JavaScript templates, etc). FWIW, we are going to keep supporting FreeMarker as a sort of reference - in classic Servlet MVC as well as Spring's new reactive web support -, including our generic base classes for template-based views which other support classes may derive from (like the Velocity 1.x based view classes do right now)."
 
-To use git to get repository contents run the following git command:
+I was not able to make it work in the latest version of Spring Boot: Jersey, Velocity and Bean validations. 
+That's why i replace jersey with Spring MVC Rest and Velocity with Thymeleaf. 
+Thymeleaf templates are html files which are more readable and handled better by most of the editors than .vm files and could be opened also by web developers/uix team.
 
-```
-#!bash
-git clone https://bitbucket.org/K15t/k15t-full-stack-dev-tasks.git
-```
+Bean validations could have been implemented in the client side using ex: https://jqueryvalidation.org/ 
+but i think it's more safe to keep the validations on the backend. I replaced Jersey also for the fact that it doesn't work with mockmvc and it needs lots of configurations to make it work properly in Spring Boot 2.2.0.
+ 
+The provided stack: Spring Boot (web), Thymeleaf, Spring Data Jpa needs no configuration at all to build a production ready application.   
 
-Afterwards create a repository in your github or Bitbucket account and configure this empty repository as the remote origin:
+## How to start 
 
-```
-#!bash
-git remote set-url origin git@github.com:you/yourrepo.git
-git push
-```
-In this way you have now a clean repository and can start to commit to it and we will be able to distinguish between what was your contribution and what was already there. Please do not copy everything into an empty repo and then add all files, this will make the git log and diff a mess.
+Installs the necessary dependencies to make the application work:
 
-Tip: Use git as you would in a product environment - small, meaningful commits with descriptive commit messages. This makes it easy for the reviewer to follow your steps and comprehend what you are doing.
+```mvn install```  (tests run automatically)
 
-Good luck!
+Create a single jar that can be run in the command line:
+
+```mvn clean package```
+
+The server starts on port 8080: http://localhost:8080 which redirects to http://localhost:8080/registration.html
+
+- The input form looks like this:
+
+![Screenshot1](Screenshot1.png)
+- Once submit is successful the response is:
+
+![Screenshot2](Screenshot2.png)
+- In case the name already exists it shows:
+
+![Screenshot3](Screenshot3.png)
+
+#### Model structure
+    {
+        "id"        : <number>, (autogenerated)
+        "name"      : <string>, regex validation: ^[a-zA-Z ]*$
+        "password"  : <string>, (encrypted) Length min = 8
+        "email"     : <string>, regex validation: .+@.+\\..+
+        "address"   : <string>,
+        "city"      : <string>,
+        "country"   : <string>,
+        "phone"     : <string>  regex validation: ^[0-9+]*$
+    }
+    
+#### Create a new user through rest api
+    POST /api/registration
+    {
+        "name": "Julian Vasa",
+        "password": "12345678",
+        "email": "test@test.com",
+        "address": "My address",
+        "city": "Tirane",
+        "country": "Albania",
+        "phone": "1213123213"
+    }
+
+Example response:
+
+    HTTP 201 CREATED
+    POST /api/registration
+    {
+        "id": 1,
+        "name": "Julian Vasa",
+        "password": "$2a$10$5M0nttOgSVCIaIJy0w4XqO.YNYr9AGWyeTZVX5eKl38mC6W27oR/.",
+        "email": "test@test.com",
+        "address": "My address",
+        "city": "Tirane",
+        "country": "Albania",
+        "phone": "1213123213"
+    }
+    
+In case the name already exists the response is:
+
+    HTTP 409 CONFLICT
+    POST /api/registration
+    {
+        "code": "USER_ALREADY_EXISTS",
+        "description": "A user with the given username already exists"
+    }    
+    
