@@ -47,6 +47,11 @@ public class User {
     @NotEmpty(message = "Please fill in the address")
     private String address;
 
-    //@Pattern(regexp = "\\(?\\+\\(?49\\)?[ ()]?([- ()]?\\d[- ()]?){10}", message = "Phone number not in the correct format! Ex: +491739341284")
+    private String city;
+
+    private String country;
+
+
+    @Pattern(regexp = "^[0-9+]*$", message = "Phone should contains only numbers and/or +!")
     private String phone;
 }
