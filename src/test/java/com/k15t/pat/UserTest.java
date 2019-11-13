@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class UserTest {
-    private static final String PHONE_NUMBER_NOT_CORRECT = "Phone number not in the correct format! Ex: +491739341284";
+    private static final String PHONE_NUMBER_NOT_CORRECT = "Phone should contains only numbers and/or +!";
     private static final String PASSWORD_SHOULD_BE_MIN_8_CHARACTERS = "Password should be min 8 characters!";
     private static final String NAME_SHOULD_CONTAINS_ONLY_LETTERS_NO_NUMBERS_OR_SPECIAL_CHARACTERS = "Name should contains only letters, no numbers or special characters!";
     private static final String NAME_LENGTH_RANGE = "length must be between 2 and 2147483647";
@@ -152,7 +152,7 @@ public class UserTest {
         user.setPassword("12345678");
         user.setEmail("user@test.com");
         user.setAddress("address");
-        user.setPhone("012456777888");
+        user.setPhone("1 012456777888");
 
         Optional<ConstraintViolation<User>> violation = validator.validate(user).stream().findFirst();
         assertTrue(violation.isPresent());

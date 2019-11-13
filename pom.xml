@@ -53,12 +53,14 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <properties>
         <spring-boot.version>2.2.0.RELEASE</spring-boot.version>
         <java.version>1.8</java.version>
         <start-class>com.k15t.pat.ApplicationBootstrap</start-class>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <build>

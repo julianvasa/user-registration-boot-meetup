@@ -1,6 +1,5 @@
 package com.k15t.pat.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,17 +11,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.*;
-import java.io.Serializable;
 
 /**
  * User entity to persist data to the H2 database
+ * Field validation are defined in this class
  *
  * @author Julian Vasa
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
 @Entity
 public class User {
 
@@ -49,7 +46,6 @@ public class User {
     private String city;
 
     private String country;
-
 
     @Pattern(regexp = "^[0-9+]*$", message = "Phone should contains only numbers and/or +!")
     private String phone;

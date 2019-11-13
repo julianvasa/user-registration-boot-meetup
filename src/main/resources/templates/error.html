@@ -17,6 +17,10 @@
 <div class="container">
     <br>
 
+    <div th:if="${already_exists}">
+        <div class="alert alert-danger">Name already exists!</div>
+    </div>
+
     <div th:if="${success}">
         <div class="alert alert-info">You've successfully registered to Java Meetup!</div>
     </div>
