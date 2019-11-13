@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html
+    xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>PAT Registration</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<div th:include="common/header"></div>
+
+<div class="container">
+
+    <br>
+
+    <div th:if="${success}">
+        <div class="alert alert-info">You've successfully registered to Java Meetup!</div>
+
+    </div>
+    <div class="card" th:if="${success}">
+
+        <table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">NAME</th>
+                <th scope="col">EMAIL</th>
+                <th scope="col">ADDRESS</th>
+                <th scope="col">CITY</th>
+                <th scope="col">COUNTRY</th>
+                <th scope="col">PHONE</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${newUser}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.address}"></td>
+                <td th:text="${user.city}"></td>
+                <td th:text="${user.country}"></td>
+                <td th:text="${user.phone}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card" th:if="${success == null}" style="width:60%">
+
+        <h5 class="card-header info-color white-text text-center py-4">
+            <strong>New user registration</strong>
+        </h5>
+
+        <for class="card-body px-md -5 pt-0">
+
+            <form method="POST"
+                  action="/rest/registration">
+
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="1234 Main St">
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="city">City</label>
+                        <input type="text" class="form-control" id="city" name="city" placeholder="City">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="country">Country</label>
+                        <input id="country" class="form-control" type="text" name="country" placeholder="Country">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </for>
+    </div>
+</div>
+
+<div th:include="common/footer"></div>
+</body>
+</html>
