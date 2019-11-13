@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -30,6 +31,7 @@ public class UserRegistrationControllerTest {
     private ObjectMapper mapper;
 
     private final String payload = "{\"name\":\"name\",\"password\":\"password\",\"email\":\"test@test.com\",\"address\":\"address\"}";
+    private final String incorrectData = "{\"name\":\"name1\",\"password\":\"password\",\"email\":\"test@test.com\",\"address\":\"address\"}";
 
     @Test
     public void testRegistrationFrontend() throws Exception {
@@ -42,8 +44,17 @@ public class UserRegistrationControllerTest {
     }
 
     @Test
+    public void testRegistrationFrontendWithIncorrectData() throws Exception {
+        User user = mapper.readValue(incorrectData, User.class);
+        mockMvc.perform(post("/rest/registration")
+            .flashAttr("user", user))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("success", equalTo(null)))
+            .andExpect(model().attribute("newUser", equalTo(null)));
+    }
+
+    @Test
     public void testRegistrationApi() throws Exception {
-        User user = mapper.readValue(payload, User.class);
         MvcResult response = mockMvc.perform(post("/api/registration")
             .content(payload)
             .accept(MediaType.APPLICATION_JSON)
@@ -53,6 +64,15 @@ public class UserRegistrationControllerTest {
         User userResponse = mapper.readValue(response.getResponse().getContentAsString(), User.class);
         assertNotNull(userResponse);
         assertNotNull(userResponse.getId());
+    }
 
+    @Test
+    public void testRegistrationApiWithIncorrectInputData() throws Exception {
+        mockMvc.perform(post("/api/registration")
+            .content(incorrectData)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andReturn();
     }
 }
