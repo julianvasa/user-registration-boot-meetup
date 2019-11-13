@@ -9,10 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -23,6 +20,9 @@ import java.util.List;
 public class UserRegistrationController {
     @Autowired
     private UserService userService;
+
+    private static final String REDIRECT_TO_HOME = "redirect:/registration.html";
+
 
     @GetMapping("/")
     public String index() {
@@ -66,4 +66,12 @@ public class UserRegistrationController {
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         }
     }
+
+
+    @GetMapping(value = "/rest/registration")
+    public String redirectTohHome() {
+        return REDIRECT_TO_HOME
+            ;
+    }
+
 }
